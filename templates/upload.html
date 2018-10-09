@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body_content %}
+    <form method="post" action="/send" enctype="multipart/form-data">
+        <div class="custom-file">
+            <input type="file" name="upfile" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" id="customLabel" for="customFile">Select file...</label>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">VirusTotal API</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-secondary active">
+                    <input type="radio" name="useVT" id="VT-On" autocomplete="off" checked>
+                    使用する
+                </label>
+                <label class="btn btn-outline-secondary">
+                    <input type="radio" name="useVT" id="VT-Off" autocomplete="off">
+                    使用しない
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">アップロード</button>
+    </form>
+{% endblock %}
+{% block script_content %}
+    <script src="/static/js/upload.js"></script>
+{% endblock %}
