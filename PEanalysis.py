@@ -33,7 +33,6 @@ def prepare(pefiles_dir):
 def file_check(filepath, pefiles_dir):
     if not os.path.isdir(pefiles_dir):
         print(pefiles_dir, ' is not found.', file=sys.stderr)
-        print('please try --prepare option.')
         return pefiles_dir + 'が存在しません。'
 
     if not os.path.isfile(filepath):
@@ -156,12 +155,10 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
         
 
     # ismalware, VirusTotalLink
-    print(useVT)
     flag = False
     if useVT == 'on':
         vt = VirusTotalPublicApi(api_key)
         res = vt.get_file_report(m5.hexdigest())
-        print(json.dumps(res, sort_keys=False, indent=4))
         if 'results' in res:
             if 'positives' in res['results']:
                 if res['results']['positives'] > 0:
@@ -183,8 +180,6 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
         ret_list.append('')
     
     ret_dict = {}
-    print(ret_list)
-    print(len(HEADER), len(ret_list))
     for i in range(0, len(HEADER)):
         ret_dict[HEADER[i]] = ret_list[i]
 
