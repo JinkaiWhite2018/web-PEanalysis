@@ -19,17 +19,17 @@ web-PEanalysisを動かすにあたり、必要となるPythonのモジュール
 
 ```
 # ssdeepを動かすために必要となるパッケージのインストール
-$ sudo yum groupinstall "Development Tols"
+$ sudo yum groupinstall "Development Tools"
 $ sudo yum install epel-release
 $ sudo yum install libffi-devel python-devel python-pip ssdeep-devel ssdeep-libs
 # Pythonモジュールであるssdeepのインストール
-$ sudo pip install ssdeep
+$ pip install ssdeep
 ```
 
 - [pyimpfuzzy](https://pypi.org/project/pyimpfuzzy/)
 
 ```
-pip install pyimpfuzzy
+$ pip install pyimpfuzzy
 ```
 
 - [pehash](https://github.com/knowmalware/pehash)
@@ -37,7 +37,7 @@ pip install pyimpfuzzy
 ```
 $ git clone https://github.com/knowmalware/pehash
 $ cd pehash
-$ sudo python setup.py install
+$ python setup.py install
 ```
 
 - [pefile](https://pypi.org/project/pefile/)
@@ -49,14 +49,14 @@ $ pip install pefile
 - [flask](https://pypi.org/project/Flask/)
 
 ```
-$ pip install flask
+$ pip install Flask
 ```
 
 - [pymongo](https://pypi.org/project/pymongo/)
 
 ```
 # mongodb4.0のインストール
-cat /etc/yum.repos.d/mongodb-org-4.0.repo
+$ cat /etc/yum.repos.d/mongodb-org-4.0.repo
 [mongodb-org-4.0]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
@@ -86,7 +86,7 @@ web-PEanalysis/
     PEanalysis.py
     PEiD/
         PEiD
-    TrID/
+    trid/
         trid
     app.py
     config.py
@@ -98,15 +98,16 @@ web-PEanalysis/
 ```
 $ mkdir PEiD
 $ cd PEiD
-$ sudo chmod 755 PEiD
+$ curl -L https://github.com/K-atc/PEiD/releases/download/v0.1.1/PEiD > PEiD
+$ chmod 755 PEiD
 $ ./PEiD --prepare
 ```
 
 - [TrID](http://mark0.net/soft-trid-e.html)
 
 ```
-$ mkdir TrID
-$ cd TrID
+$ mkdir trid
+$ cd trid
 $ curl http://mark0.net/download/trid_linux_64.zip > trid_linux_64.zip
 $ unzip trid_linux_64.zip
 $ chmod 755 trid
@@ -122,7 +123,7 @@ $ python tridupdate.py
     - `$ python app.py`
 3. `http://localhost:5000/` へアクセスします。
 
-VirusTotal APIを使用する場合は、instance/instance_config.cfgファイルを作成し、以下の内容を記述してください。
+VirusTotal APIを使用する場合は、instance/instance\_config.cfgファイルを作成し、以下の内容を記述してください。
 
 ```
 VT_API_KEY = 'your virus total api key'
