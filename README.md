@@ -1,5 +1,9 @@
 # web-PEanalysis
 
+![upload-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
+
+![search-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-search.png)
+
 PEファイルの表層解析を行い、解析結果を閲覧するプログラムです。また解析結果の項目を利用して、これまで解析したPEファイルの表層解析結果を検索することができます。
 
 ## インストール
@@ -94,6 +98,10 @@ web-PEanalysis/
 ```
 
 - [PEiD](https://github.com/K-atc/PEiD)
+
+PEiDではlibcrypto.so.1.0.0を使用するため、libcrypto.so.1.0.0が存在しない場合は `ln -s /lib64/libcrypto.so.1.0.2k /lib64/libcrypto.so.1.0.0` のようにコマンド等を使用して、libcrypto.so.1.0.0を用意しておいてください。
+
+※ `/lib64/libcrypto.so.1.0.2k` はご自身の使用しているlibcrypto.soのバージョンに合わせて変更してください。
 
 ```
 $ mkdir PEiD
