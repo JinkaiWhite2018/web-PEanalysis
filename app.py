@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from flask import Flask, render_template, request, send_from_directory, Response
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 import os
 import math
 from pymongo import MongoClient

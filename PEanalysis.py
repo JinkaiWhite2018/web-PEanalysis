@@ -170,8 +170,7 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
             if 'permalink' in res['results']:
                 ret_list.append(str(res['results']['permalink']))
             else:
-                print('Server error occured.', file=sys.stderr)
-                return 'VirusTotalでエラーが発生しました。', s256.hexdigest()
+                ret_list.append('')
         else:
             print('Server error occured.', file=sys.stderr)
             return 'VirusTotalでエラーが発生しました。', s256.hexdigest()
