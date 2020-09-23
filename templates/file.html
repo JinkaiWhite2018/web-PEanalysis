@@ -1,9 +1,11 @@
 {% extends "layout.html" %}
 {% block body_content %}
-<table class="table table-striped table-bordered">
+<h3 class="ml-1 my-2"><u>Analysis Result</u></h4>
+<div class="table-responsive mb-3">
+  <table class="table table-striped table-bordered">
     <tbody>
-        {% for k, v in file_dict.items() %}
-        {% if k != '_id' %}
+            {% for k, v in file_dict.items() %}
+            {% if k != '_id' %}
         <tr>
             <th scope="row"> {{ k }} </th>
             <th> {%if k == 'VirusTotalLink' %}<a href="{{ v }}">{{ v }}</a>{% elif k == 'nearest sha256' %}<a href="/file/{{ v }}">{{ v }}</a>{% else %}<pre>{{ v }}</pre>{% endif %} </th>
@@ -15,5 +17,6 @@
             <th><a href="/pefile/{{ file_dict['sha256'] }}">pefile dump_info()</a></th>
         </tr>
     </tbody>
-</table>
+  </table>
+</div>
 {% endblock %}
