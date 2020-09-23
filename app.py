@@ -151,4 +151,11 @@ if __name__ == '__main__':
         app.config['cuckoo'] = True
     except:
         app.config['cuckoo'] = False
+    
+    try:
+        subprocess.Popen(['cuckoo','api','--host','0.0.0.0'])
+        app.config['cuckoo_api'] = True
+    except:
+        app.config['cuckoo_api'] = False
+    
     app.run(host='0.0.0.0', port=5000)
