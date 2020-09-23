@@ -6,6 +6,7 @@ import os
 import math
 from pymongo import MongoClient
 import PEanalysis
+import subprocess
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config.Product')
@@ -126,6 +127,14 @@ def render_search():
 def render_index():
     return render_template('index.html', title='PEFile Surface Analyser')
 
+    
+# @app.route('/start_cuckoo')
+# @app.route('/start_cuckoo.html')
+# def start_cuckoo():
+#     msg=subprocess.call(['cuckoo','web'])
+#     return render_template('start_cuckoo.html', title='start cuckoo', msg=msg)
+
 
 if __name__ == '__main__':
+    subprocess.Popen(['cuckoo','web'])
     app.run(host='0.0.0.0', port=5000)

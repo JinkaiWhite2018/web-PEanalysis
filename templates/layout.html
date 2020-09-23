@@ -33,6 +33,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/upload.html">Upload</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/" target="_blank">Cuckoo Sandbox</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="/start_cuckoo.html" onclick="delayURL('http\://localhost:8000/',4000)">Cuckoo Sandbox</a>
+                </li> -->
             </ui>
     </nav>
     {% block body_content %}{% endblock %}
@@ -42,6 +48,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function delayURL(url, time) {
+            setTimeout("top.location.href = '" + url + "'", time);
+        }
+    </script>
     {% block script_content %}{% endblock %}
 </body>
 </html>
