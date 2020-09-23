@@ -64,13 +64,16 @@ def send_file():
         if not os.path.isdir(updir):
             os.mkdir(updir)
         upfile.save(os.path.join(app.config['UPLOAD_DIR'], filename))
-        return render_template('send.html', title='PEFile Surface Analyser - Send', filename=filename, useVT=useVT)
+        return render_template('send.html', title='PEFile Surface Analyser - Send', 
+                filename=filename, useVT=useVT, 
+                cuckoo=app.config['cuckoo'])
 
 
 @app.route('/upload')
 @app.route('/upload.html')
 def render_upload():
-    return render_template('upload.html', title='PEFile Surface Analyser - Upload')
+    return render_template('upload.html', title='PEFile Surface Analyser - Upload', 
+            cuckoo=app.config['cuckoo'])
 
 
 @app.route('/pefile/<s256>')
@@ -79,7 +82,9 @@ def render_pefile(s256):
     if os.path.isfile(topath):
         with open(topath, 'r') as f:
             textdata = f.read()
-            return render_template('pefile.html', title='PEFile Surface Analyser - pefile', textdata=textdata)
+            return render_template('pefile.html', title='PEFile Surface Analyser - pefile', 
+                    textdata=textdata, 
+                    cuckoo=app.config['cuckoo'])
     else:
         return '不正なリクエストです。'
 
@@ -90,7 +95,9 @@ def render_file(s256):
     if result:
         if 'TrID' in result:
             result['TrID'] = result['TrID'].replace('\\n', '\n')
-        return render_template('file.html', title='PEFile Surface Analyser - file', file_dict=result)
+        return render_template('file.html', title='PEFile Surface Analyser - file', 
+                file_dict=result, 
+                cuckoo=app.config['cuckoo'])
     else:
         return '不正なリクエストです。'
 
@@ -118,14 +125,16 @@ def render_search():
             'search.html', title='PEFile Surface Analyser - Search', page=page,
             start_page=start_page, end_page=end_page, all_page_num=all_page_num,
             headlist=PEanalysis.HEADER, impheadlist=PEanalysis.IMPHEAD,
-            mongolist=result, get_params=get_params)
+            mongolist=result, get_params=get_params, 
+            cuckoo=app.config['cuckoo'])
 
 
 @app.route('/')
 @app.route('/index')
 @app.route('/index.html')
 def render_index():
-    return render_template('index.html', title='PEFile Surface Analyser')
+    return render_template('index.html', title='PEFile Surface Analyser', 
+            cuckoo=app.config['cuckoo'])
 
     
 # @app.route('/start_cuckoo')
@@ -136,6 +145,10 @@ def render_index():
 
 
 if __name__ == '__main__':
-    subprocess.Popen(['cuckoo'])
-    subprocess.Popen(['cuckoo','web'])
+    try:
+        subprocess.Popen(['cuckoo'])
+        subprocess.Popen(['cuckoo','web','--host','0.0.0.0'])
+        app.config['cuckoo'] = True
+    except:
+        app.config['cuckoo'] = False
     app.run(host='0.0.0.0', port=5000)
