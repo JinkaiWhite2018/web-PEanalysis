@@ -6,7 +6,16 @@
         {% if k != '_id' %}
         <tr>
             <th scope="row"> {{ k }} </th>
-            <th> {%if k == 'VirusTotalLink' %}<a href="{{ v }}">{{ v }}</a>{% elif k == 'nearest sha256' %}<a href="/file/{{ v }}">{{ v }}</a>{% else %}<pre>{{ v }}</pre>{% endif %} </th>
+            <th> {%if k == 'VirusTotalLink' %}
+                     <a href="{{ v }}">{{ v }}</a>
+                 {% elif k == 'nearest sha256' %}
+                     <a href="/file/{{ v }}">{{ v }}</a>
+                 {% elif k == 'task_id' and cuckoo %}
+                     <a href="http://localhost:8000/analysis/{{ v }}/summary">{{ v }}</a>
+                 {% else %}
+                     <pre>{{ v }}</pre>
+                 {% endif %}
+            </th>
         </tr>
         {% endif %}
         {% endfor %}
