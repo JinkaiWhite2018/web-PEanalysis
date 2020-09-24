@@ -1,0 +1,15 @@
+version: '3'
+services:
+    app:
+        build: .
+        environment:
+            HOST_MONGODB: mongo
+        ports:
+            - 8181:5000
+        restart: always
+        volumes:
+            - ./uploads:/home/web-PEanalysis/uploads
+        tty: true
+    mongo:
+        image: mongo
+        restart: always
