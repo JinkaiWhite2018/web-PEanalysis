@@ -1,6 +1,7 @@
 venv
 PEiD
 trid
+build
 __pycache__
 uploads
 pefiles
