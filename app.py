@@ -119,6 +119,28 @@ def render_strings(s256):
         return '不正なリクエストです。'
 
 
+@app.route('/imports/<s256>')
+def render_imports(s256):
+    result = collection.find_one({'sha256': s256})
+    if result:
+        return render_template('one_data.html', title='PEFile Surface Analyser - import table', 
+                one_data=result['import table'], 
+                cuckoo=app.config['cuckoo'])
+    else:
+        return '不正なリクエストです。'
+
+
+@app.route('/exports/<s256>')
+def render_exports(s256):
+    result = collection.find_one({'sha256': s256})
+    if result:
+        return render_template('one_data.html', title='PEFile Surface Analyser - export table', 
+                one_data=result['export table'], 
+                cuckoo=app.config['cuckoo'])
+    else:
+        return '不正なリクエストです。'
+
+
 @app.route('/file/<s256>')
 def render_file(s256):
     result = collection.find_one({'sha256': s256})

@@ -13,7 +13,13 @@
                  {% elif k == 'nearest sha256' %}
                      <a href="/file/{{ v }}">{{ v }}</a>
                  {% elif k == 'strings' %}
-                     <a href="/strings/{{ file_dict['sha256'] }}">strings</a>
+		     <a href="/strings/{{ file_dict['sha256'] }}">{{ k }}</a>
+                 {% elif k == 'import table' %}
+		     <a href="/imports/{{ file_dict['sha256'] }}">{{ k }}</a>
+                 {% elif k == 'export table' %}
+		     {% if v != '' %}
+		         <a href="/exports/{{ file_dict['sha256'] }}">{{ k }}</a>
+		     {% endif %}
 		 {% elif k == 'task_id' and cuckoo %}
                      <a href="http://localhost:8000/analysis/{{ v }}/summary">{{ v }}</a>
                  {% else %}

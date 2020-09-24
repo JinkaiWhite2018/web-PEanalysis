@@ -18,7 +18,8 @@ HEADER = ['date', 'md5', 'sha1', 'sha256', 'ssdeep', 'imphash', 'impfuzzy',
           'peHashNG', 'Platform', 'GUI Program', 'Console Program', 'DLL',
           'Packed', 'Anti-Debug', 'mutex', 'contains base64',
           'AntiDebugMethod', 'PEiD', 'TrID', 'nearest sha256', 'nearest value',
-          'VTismalware', 'VirusTotalLink', 'strings']
+          'VTismalware', 'VirusTotalLink', 'strings', 'import table', 
+          'export table']
 IMPHEAD = ['date', 'sha256']
 
 
@@ -182,6 +183,25 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
     res = subprocess.check_output(['strings', filepath])
     res = res.decode('utf-8')
     ret_list.append(res)
+
+    # import table
+    imports = []
+    for entry in pe.DIRECTORY_ENTRY_IMPORT:
+        for imp in entry.imports:
+            try:
+                imports.append(imp.name.decode('utf-8'))
+            except:
+                pass
+    imports_str = '\n'.join(imports)
+    ret_list.append(imports_str)
+
+    # export table
+    if hasattr(pe, 'DIRECTORY_ENTRY_EXPORT'):
+        exports = [s.name.decode('utf-8') for s in pe.DIRECTORY_ENTRY_EXPORT.symbols]
+        exports_str = '\n'.join(exports)
+    else:
+        exports_str = ''
+    ret_list.append(exports_str)
 
     ret_dict = {}
     for i in range(0, len(HEADER)):
