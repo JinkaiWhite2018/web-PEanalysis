@@ -120,6 +120,24 @@ def render_file(s256):
     else:
         return '不正なリクエストです。'
 
+@app.route('/statistics')
+@app.route('/statistics.html')
+def render_statistics():
+    find_data = collection.find()
+    all_count = find_data.count()
+    Statistics_header = ['GUI Program','DLL','Packed','mutex']
+    count_list = [0] * len(Statistics_header)
+    for data in find_data:
+        for i in range(0, len(Statistics_header)):
+            if data[Statistics_header[i]] == 'yes':
+                count_list[i] = count_list[i] + 1
+    for i in range(0, len(count_list)):
+        count_list[i] = count_list[i]/all_count*100
+    return render_template(
+        'statistics.html',title='PEFile Surface Analyser - Statistics',
+        all_count=all_count,header=Statistics_header,count_list=count_list,
+        cuckoo=app.config['cuckoo'])
+
 
 @app.route('/search')
 @app.route('/search.html')
@@ -146,6 +164,7 @@ def render_search():
             headlist=PEanalysis.HEADER, impheadlist=PEanalysis.IMPHEAD,
             mongolist=result, get_params=get_params, 
             cuckoo=app.config['cuckoo'])
+
 
 
 @app.route('/')
