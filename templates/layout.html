@@ -33,6 +33,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/upload.html">Upload</a>
                 </li>
+                {% if cuckoo %}
+                <li class="nav-item">
+                    <a class="nav-link" href="http://localhost:8000/" target="_blank">Cuckoo Sandbox</a>
+                </li>
+                {% endif %}
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="/start_cuckoo.html" onclick="delayURL('http\://localhost:8000/',4000)">Cuckoo Sandbox</a>
+                </li> -->
             </ui>
 	</div>
     </nav>

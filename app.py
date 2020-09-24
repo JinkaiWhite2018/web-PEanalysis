@@ -6,11 +6,14 @@ import os
 import math
 from pymongo import MongoClient
 import PEanalysis
+import subprocess
+import requests
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config.Product')
 if not app.config.from_pyfile('instance_config.cfg', silent=True):
     app.config['VT_API_KEY'] = ''
+    app.config['CUCKOO_API_KEY'] = ''
 
 client = MongoClient(app.config['HOST_DB'], app.config['PORT_DB'])
 db = client[app.config['USE_DB']]
@@ -24,6 +27,7 @@ def analyse_file(filename, useVT):
         filepath = os.path.join(os.getcwd(), app.config['UPLOAD_DIR'], filename)
         PEanalysis.prepare(app.config['PEFILES_DIR'])
         pe = PEanalysis.file_check(filepath, app.config['PEFILES_DIR'])
+
         if isinstance(pe, str):
                 #pe=error_message
                 yield 'data:<p>\n'
@@ -32,7 +36,6 @@ def analyse_file(filename, useVT):
         else:
             yield 'data:<p>解析中...</p>\n\n'
             res_dict, s256path = PEanalysis.analyse(filepath, app.config['PEFILES_DIR'], pe, collection, useVT, app.config['VT_API_KEY'])
-            os.remove(filepath)
             if isinstance(res_dict, str):
                 #res_dict=error_message, s256path=s256
                 yield 'data:<p>' + res_dict + '</p>\n'
@@ -46,7 +49,24 @@ def analyse_file(filename, useVT):
                 PEanalysis.write_data(pe, collection, res_dict, s256path)
                 yield 'data:<p>\n'
                 yield 'data:解析が完了しました。<br>\n'
-                yield 'data:<a href=\"/file/' + os.path.basename(s256path).replace('.txt', '') + '\">こちらから解析結果を確認することができます。</a>\n'
+
+                if app.config['cuckoo'] and app.config['cuckoo_api'] \
+                        and app.config['CUCKOO_API_KEY'] != '':
+                    yield 'data:<p>cuckoo sandboxにファイルを送信中...</p>\n'
+                    with open(filepath, "rb") as f:
+                        files = {"file": (filename, f)}
+                        r = requests.post("http://localhost:8090/tasks/create/file", headers={"Authorization": "Bearer " + app.config['CUCKOO_API_KEY']}, files=files)
+                    task_id = r.json()["task_id"]
+                    yield 'data:<p>送信完了: task_id = ' + str(task_id) + '</p>\n\n'
+                    yield 'data:<p><a href="http://localhost:8000/analysis/'+str(task_id)+'/summary">Cuckoo Sandboxの解析結果(解析完了までは404が出ます)</a></p>\n\n'
+                    collection.update_one({
+                        'sha256': res_dict['sha256']
+                    }, {
+                        '$set': {'task_id': task_id}
+                    })
+
+                yield 'data:<a href=\"/file/' + os.path.basename(s256path).replace('.txt', '') + '\">web-PEanalysisの解析結果</a>\n'
+            os.remove(filepath)
         yield 'data:</p>\n\n'
     return Response(analyse(), mimetype='text/event-stream')
 
@@ -63,13 +83,16 @@ def send_file():
         if not os.path.isdir(updir):
             os.mkdir(updir)
         upfile.save(os.path.join(app.config['UPLOAD_DIR'], filename))
-        return render_template('send.html', title='PEFile Surface Analyser - Send', filename=filename, useVT=useVT)
+        return render_template('send.html', title='PEFile Surface Analyser - Send', 
+                filename=filename, useVT=useVT, 
+                cuckoo=app.config['cuckoo'])
 
 
 @app.route('/upload')
 @app.route('/upload.html')
 def render_upload():
-    return render_template('upload.html', title='PEFile Surface Analyser - Upload')
+    return render_template('upload.html', title='PEFile Surface Analyser - Upload', 
+            cuckoo=app.config['cuckoo'])
 
 
 @app.route('/pefile/<s256>')
@@ -78,7 +101,9 @@ def render_pefile(s256):
     if os.path.isfile(topath):
         with open(topath, 'r') as f:
             textdata = f.read()
-            return render_template('pefile.html', title='PEFile Surface Analyser - pefile', textdata=textdata)
+            return render_template('pefile.html', title='PEFile Surface Analyser - pefile', 
+                    textdata=textdata, 
+                    cuckoo=app.config['cuckoo'])
     else:
         return '不正なリクエストです。'
 
@@ -89,7 +114,9 @@ def render_file(s256):
     if result:
         if 'TrID' in result:
             result['TrID'] = result['TrID'].replace('\\n', '\n')
-        return render_template('file.html', title='PEFile Surface Analyser - file', file_dict=result)
+        return render_template('file.html', title='PEFile Surface Analyser - file', 
+                file_dict=result, 
+                cuckoo=app.config['cuckoo'])
     else:
         return '不正なリクエストです。'
 
@@ -117,15 +144,37 @@ def render_search():
             'search.html', title='PEFile Surface Analyser - Search', page=page,
             start_page=start_page, end_page=end_page, all_page_num=all_page_num,
             headlist=PEanalysis.HEADER, impheadlist=PEanalysis.IMPHEAD,
-            mongolist=result, get_params=get_params)
+            mongolist=result, get_params=get_params, 
+            cuckoo=app.config['cuckoo'])
 
 
 @app.route('/')
 @app.route('/index')
 @app.route('/index.html')
 def render_index():
-    return render_template('index.html', title='PEFile Surface Analyser')
+    return render_template('index.html', title='PEFile Surface Analyser', 
+            cuckoo=app.config['cuckoo'])
+
+    
+# @app.route('/start_cuckoo')
+# @app.route('/start_cuckoo.html')
+# def start_cuckoo():
+#     msg=subprocess.call(['cuckoo','web'])
+#     return render_template('start_cuckoo.html', title='start cuckoo', msg=msg)
 
 
 if __name__ == '__main__':
+    try:
+        subprocess.Popen(['cuckoo'])
+        subprocess.Popen(['cuckoo','web','--host','0.0.0.0'])
+        app.config['cuckoo'] = True
+    except:
+        app.config['cuckoo'] = False
+    
+    try:
+        subprocess.Popen(['cuckoo','api','--host','0.0.0.0'])
+        app.config['cuckoo_api'] = True
+    except:
+        app.config['cuckoo_api'] = False
+    
     app.run(host='0.0.0.0', port=5000)
