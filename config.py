@@ -1,7 +1,7 @@
 class Product(object):
     UPLOAD_DIR = 'uploads'
     PEFILES_DIR = 'pefiles'
-    ONE_PAGE = 2
+    ONE_PAGE = 20
     PAGE_NUM = 5
     HOST_DB = 'localhost'
     PORT_DB = 27017
