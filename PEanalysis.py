@@ -18,7 +18,7 @@ HEADER = ['date', 'md5', 'sha1', 'sha256', 'ssdeep', 'imphash', 'impfuzzy',
           'peHashNG', 'Platform', 'GUI Program', 'Console Program', 'DLL',
           'Packed', 'Anti-Debug', 'mutex', 'contains base64',
           'AntiDebugMethod', 'PEiD', 'TrID', 'nearest sha256', 'nearest value',
-          'VTismalware', 'VirusTotalLink']
+          'VTismalware', 'VirusTotalLink', 'strings']
 IMPHEAD = ['date', 'sha256']
 
 
@@ -178,6 +178,11 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
         ret_list.append('')
         ret_list.append('')
     
+    # strings
+    res = subprocess.check_output(['strings', filepath])
+    res = res.decode('utf-8')
+    ret_list.append(res)
+
     ret_dict = {}
     for i in range(0, len(HEADER)):
         ret_dict[HEADER[i]] = ret_list[i]
