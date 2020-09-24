@@ -5,11 +5,14 @@ services:
         environment:
             HOST_MONGODB: mongo
         ports:
-            - 8181:5000
+            - 5000:5000
         restart: always
         volumes:
-            - ./uploads:/home/web-PEanalysis/uploads
+            - ./uploads:/root/web-PEanalysis/uploads
         tty: true
     mongo:
         image: mongo
         restart: always
+        volumes:
+            - ./mongo/db:/data/db
+            - ./mongo/configdb:/data/config
