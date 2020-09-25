@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body_content %}
+<div class="py-3">
+  <div class="row">
+    <h3><u>Statistics</u></h3>
+    <p class="text-muted mx-3 mt-2">all_count : {{all_count}}</p>
+  </div>
+  {% if all_count != 0 %}
+  {% for i in range(0,header|length) %}
+  <div class="my-3">
+    <h5>{{header[i]}}</h5>
+    <div class="row mb-2">
+      <div style="height:30px;width:{{count_list[i]}}%;background-color:#8181F7"></div>
+      <div style="height:30px;width:{{100-count_list[i]}}%;background-color:#F78181"></div>
+    </div>
+    <div class="row" style="font-size:17px;">
+      <div class="col-6 text-primary text-left">yes {{count_list[i]}}%</div>
+      <div class="col-6 text-danger text-right">no {{100-count_list[i]}}%</div>
+    </div>
+  {% if i+1 != header|length  %}
+    <div class="my-4" style="width:100%; border: 1px solid #d8d8d8;"></div>
+  {% endif %}
+  </div>
+  {% endfor %}
+  {% else %}
+    <p>
+    解析されたファイルが存在しません。解析するファイルを<a href="/upload.html">アップロード</a>してください。
+    </p>
+  {% endif %}
+</div>
+{% endblock %}
+
