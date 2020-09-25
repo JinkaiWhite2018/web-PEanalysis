@@ -2,11 +2,11 @@
 
 - [CentOS7用](https://github.com/JinkaiINT2020/web-PEanalysis/blob/develop/README.md)
 
-![upload-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
+![upload-page](https://raw.githubusercontent.com/JinkaiINT2020/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
 
-![search-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-search.png)
+![search-page](https://raw.githubusercontent.com/JinkaiINT2020/web-PEanalysis/readmeImage/web-PEanalysis-search.png)
 
-PEファイルの表層解析、および動的解析を行い、解析結果を閲覧するプログラムです。動的解析に際しては、Cuckoo Sandboxにリクエストを送信することで解析を行います。また解析結果の項目を利用して、これまで解析したPEファイルの解析結果を検索することができます。
+PEファイルの表層解析、および動的解析を行い、解析結果を閲覧するプログラムです。動的解析に際しては、Cuckoo Sandboxにリクエストを送信することで解析を行います。また解析結果の項目を利用して、これまで解析したPEファイルの解析結果の検索や、統計情報の表示ができます。
 
 ## インストール
 
@@ -180,8 +180,9 @@ CUCKOO_API_KEY = 'your ~/.cuckoo/conf/cuckoo.conf api_token value'
 
 - `http://localhost:5000/search` : これまで解析を行ったPEファイルを検索することができます。
     - 表示されているテーブルの行をクリックすると、`http://localhost:5000/file/<sha256>` へ遷移します。
-- `http://localhost:5000/upload`  : PEファイルをアップロードし、表層解析を行います。
+- `http://localhost:5000/upload` : PEファイルをアップロードし、表層解析を行います。
     - この時、VirusTotalの使用の可否を選択します。
+- `http://localhost:5000/statistics` : これまでのPEファイルの解析結果をもとに、統計情報を表示します。
 - `http://localhost:5000/file/<sha256>` : sha256に対応したPEファイルの表層解析結果を表示します。
     - `strings` をクリックすることで、 `http://localhost:5000/strings/<sha256>` に遷移します。
     - `import table` をクリックすることで、 `http://localhost:5000/imports/<sha256>` に遷移します。

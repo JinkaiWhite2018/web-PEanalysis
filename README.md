@@ -1,12 +1,18 @@
-# web-PEanalysis
+# web-PEanalysis(CentOS7)
 
-![upload-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
+- [Ubuntu18.04用](https://github.com/JinkaiINT2020/web-PEanalysis/blob/develop/README_ubuntu.md)
 
-![search-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-search.png)
+![upload-page](https://raw.githubusercontent.com/JinkaiINT2020/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
 
-PEファイルの表層解析を行い、解析結果を閲覧するプログラムです。また解析結果の項目を利用して、これまで解析したPEファイルの表層解析結果を検索することができます。
+![search-page](https://raw.githubusercontent.com/JinkaiINT2020/web-PEanalysis/readmeImage/web-PEanalysis-search.png)
+
+PEファイルの表層解析、および動的解析を行い、解析結果を閲覧するプログラムです。動的解析に際しては、Cuckoo Sandboxにリクエストを送信することで解析を行います。また解析結果の項目を利用して、これまで解析したPEファイルの解析結果の検索や、統計情報の表示ができます。
+
+注意: 現在、動的解析はUbuntu18.04のみ対応しています。詳しくは[Ubuntu18.04のREADME](https://github.com/JinkaiINT2020/web-PEanalysis/blob/develop/README_ubuntu.md)をご覧ください。
 
 ## インストール
+
+Docker Composeを用いてweb-PEanalysisを起動する場合は、実行方法まで進めてください。
 
 ### 使用環境
 
@@ -126,23 +132,45 @@ $ python tridupdate.py
 
 ## 実行方法
 
+### APIキーの設定
+
+VirusTotal APIを使用する場合、Cuckoo Sandboxを使用する場合は、それぞれinstance/instance\_config.cfgファイルを作成し、以下の内容を記述してください。
+
+- VirusTotal API: `VT_API_KEY`
+- Cuckoo Sandbox: `CUCKOO_API_KEY`
+
+```
+# 例
+VT_API_KEY = 'your virus total api key'
+CUCKOO_API_KEY = 'your ~/.cuckoo/conf/cuckoo.conf api_token value'
+```
+
+### Docker Composeを用いた起動方法
+
+注意: Docker Composeを用いて起動する場合、動的解析を行うことができなくなります。
+
+1. web-PEanalysisディレクトリへ移動します。
+3. 以下のコマンドを実行します。
+    - `$ docker-compose up -d`
+4. `http://localhost:5000/` へアクセスします。
+
+### Docker Composeを用いない起動方法
+
 1. web-PEanalysisディレクトリへ移動します。
 2. 以下のコマンドを実行します。
-    - `$ python app.py`
+    - `$ python3 app.py`
 3. `http://localhost:5000/` へアクセスします。
 
-VirusTotal APIを使用する場合は、instance/instance\_config.cfgファイルを作成し、以下の内容を記述してください。
-
-```
-VT_API_KEY = 'your virus total api key'
-```
-
-### 主な機能
+## 主な機能
 
 - `http://localhost:5000/search` : これまで解析を行ったPEファイルを検索することができます。
     - 表示されているテーブルの行をクリックすると、`http://localhost:5000/file/<sha256>` へ遷移します。
-- `http://localhost:5000/upload`  : PEファイルをアップロードし、表層解析を行います。
+- `http://localhost:5000/upload` : PEファイルをアップロードし、表層解析を行います。
     - この時、VirusTotalの使用の可否を選択します。
+- `http://localhost:5000/statistics` : これまでのPEファイルの解析結果をもとに、統計情報を表示します。
 - `http://localhost:5000/file/<sha256>` : sha256に対応したPEファイルの表層解析結果を表示します。
-    - 最下部にある `pefile dump_info()` をクリックすることで、 `http://localhost:5000/pefile/<sha256>` に遷移します。
+    - `strings` をクリックすることで、 `http://localhost:5000/strings/<sha256>` に遷移します。
+    - `import table` をクリックすることで、 `http://localhost:5000/imports/<sha256>` に遷移します。
+    - `export table` をクリックすることで、 `http://localhost:5000/exports/<sha256>` に遷移します。
+    - `pefile dump_info()` をクリックすることで、 `http://localhost:5000/pefile/<sha256>` に遷移します。
 - `http://localhost:5000/pefile/<sha256>` : sha256に対応したPEファイルのダンプ結果を表示します。
