@@ -1,0 +1,19 @@
+version: '3'
+services:
+    app:
+        build: .
+        environment:
+            HOST_MONGODB: mongo
+        ports:
+            - 5000:5000
+        restart: always
+        volumes:
+            - ./uploads:/root/web-PEanalysis/uploads
+            - ./pefiles:/root/web-PEanalysis/pefiles
+        tty: true
+    mongo:
+        image: mongo
+        restart: always
+        volumes:
+            - ./mongo/db:/data/db
+            - ./mongo/configdb:/data/config

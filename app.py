@@ -15,9 +15,11 @@ if not app.config.from_pyfile('instance_config.cfg', silent=True):
     app.config['VT_API_KEY'] = ''
     app.config['CUCKOO_API_KEY'] = ''
 
-client = MongoClient(app.config['HOST_DB'], app.config['PORT_DB'])
-db = client[app.config['USE_DB']]
-collection = db[app.config['USE_COLLECTION']]
+host   = os.getenv('HOST_MONGODB', app.config['HOST_DB'])
+port   = os.getenv('PORT_MONGODB', app.config['PORT_DB'])
+client = MongoClient(host, port)
+db = client[os.getenv('DB_MONGODB', app.config['USE_DB'])]
+collection = db[os.getenv('COLLECTION_MONGODB', app.config['USE_COLLECTION'])]
 
 
 @app.route('/analyse/<filename>/<useVT>', methods=['GET'])
