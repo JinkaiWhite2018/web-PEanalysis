@@ -1,6 +1,6 @@
 # web-PEanalysis(Ubuntu18.04)
 
-- [CentOS7用](https://github.com/blob/master/web-PEanalysis/README.md)
+- [CentOS7用](https://github.com/JinkaiINT2020/web-PEanalysis/blob/develop/README.md)
 
 ![upload-page](https://raw.githubusercontent.com/JinkaiWhite2018/web-PEanalysis/readmeImage/web-PEanalysis-upload.png)
 
