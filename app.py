@@ -125,7 +125,7 @@ def render_file(s256):
 def render_statistics():
     find_data = collection.find()
     all_count = find_data.count()
-    Statistics_header = ['GUI Program','DLL','Packed','mutex']
+    Statistics_header = ['DLL','Packed','mutex','contains base64']
     count_list = [0] * len(Statistics_header)
     for data in find_data:
         for i in range(0, len(Statistics_header)):
