@@ -83,7 +83,7 @@ def send_file():
         if not os.path.isdir(updir):
             os.mkdir(updir)
         upfile.save(os.path.join(app.config['UPLOAD_DIR'], filename))
-        return render_template('send.html', title='PEFile Surface Analyser - Send', 
+        return render_template('send.html', title='web-PEanalysis - Send', 
                 filename=filename, useVT=useVT, 
                 cuckoo=app.config['cuckoo'])
 
@@ -91,7 +91,7 @@ def send_file():
 @app.route('/upload')
 @app.route('/upload.html')
 def render_upload():
-    return render_template('upload.html', title='PEFile Surface Analyser - Upload', 
+    return render_template('upload.html', title='web-PEanalysis - Upload', 
             cuckoo=app.config['cuckoo'])
 
 
@@ -101,7 +101,7 @@ def render_pefile(s256):
     if os.path.isfile(topath):
         with open(topath, 'r') as f:
             textdata = f.read()
-            return render_template('pefile.html', title='PEFile Surface Analyser - pefile', 
+            return render_template('pefile.html', title='web-PEanalysis - pefile', 
                     textdata=textdata, 
                     cuckoo=app.config['cuckoo'])
     else:
@@ -114,7 +114,7 @@ def render_file(s256):
     if result:
         if 'TrID' in result:
             result['TrID'] = result['TrID'].replace('\\n', '\n')
-        return render_template('file.html', title='PEFile Surface Analyser - file', 
+        return render_template('file.html', title='web-PEanalysis - file', 
                 file_dict=result, 
                 cuckoo=app.config['cuckoo'])
     else:
@@ -134,7 +134,7 @@ def render_statistics():
     for i in range(0, len(count_list)):
         count_list[i] = count_list[i]/all_count*100
     return render_template(
-        'statistics.html',title='PEFile Surface Analyser - Statistics',
+        'statistics.html',title='web-PEanalysis - Statistics',
         all_count=all_count,header=Statistics_header,count_list=count_list,
         cuckoo=app.config['cuckoo'])
 
@@ -159,7 +159,7 @@ def render_search():
     start_page = page - pagenum + 1 if page - pagenum + 1 >= 1 else 1
     end_page = page + pagenum - 1 if page + pagenum - 1 <= all_page_num else all_page_num
     return render_template(
-            'search.html', title='PEFile Surface Analyser - Search', page=page,
+            'search.html', title='web-PEanalysis - Search', page=page,
             start_page=start_page, end_page=end_page, all_page_num=all_page_num,
             headlist=PEanalysis.HEADER, impheadlist=PEanalysis.IMPHEAD,
             mongolist=result, get_params=get_params, 
@@ -171,7 +171,7 @@ def render_search():
 @app.route('/index')
 @app.route('/index.html')
 def render_index():
-    return render_template('index.html', title='PEFile Surface Analyser', 
+    return render_template('index.html', title='web-PEanalysis', 
             cuckoo=app.config['cuckoo'])
 
     
