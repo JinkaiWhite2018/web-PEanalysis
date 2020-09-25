@@ -12,14 +12,29 @@ import ssdeep
 import sys
 import json
 from virus_total_apis import PublicApi as VirusTotalPublicApi
+import platform
 
-HEADER = ['date', 'md5', 'sha1', 'sha256', 'ssdeep', 'imphash', 'impfuzzy',
-          'Totalhash', 'AnyMaster', 'AnyMaster_v1_0_1', 'EndGame', 'Crits',
-          'peHashNG', 'Platform', 'GUI Program', 'Console Program', 'DLL',
-          'Packed', 'Anti-Debug', 'mutex', 'contains base64',
-          'AntiDebugMethod', 'PEiD', 'TrID', 'nearest sha256', 'nearest value',
-          'VTismalware', 'VirusTotalLink']
-IMPHEAD = ['date', 'sha256']
+isUbuntu = 'Ubuntu' in platform.platform()
+if isUbuntu:
+    HEADER = ['date', 'md5', 'sha1', 'sha256', 'ssdeep', 'imphash', 'impfuzzy',
+              'Totalhash', 'AnyMaster', 'AnyMaster_v1_0_1', 'EndGame', 'Crits',
+              'peHashNG', 'Platform', 'GUI Program', 'Console Program', 'DLL',
+              'Packed', 'Anti-Debug', 'mutex', 'contains base64',
+              'AntiDebugMethod', 'PEiD', 'TrID', 'nearest sha256',
+              'nearest value', 'VTismalware', 'VirusTotalLink', 'strings', 
+              'import table', 'export table', 'Dynamic Base', 'ASLR', 
+              'High Entropy VA', 'Force Integrity', 'Isolation', 'NX', 'SEH', 
+              'CFG', 'RFG', 'SafeSEH', 'GS', 'Authenticode', 'dotNET']
+    IMPHEAD = ['date', 'sha256']
+else:
+    HEADER = ['date', 'md5', 'sha1', 'sha256', 'ssdeep', 'imphash', 'impfuzzy',
+              'Totalhash', 'AnyMaster', 'AnyMaster_v1_0_1', 'EndGame', 'Crits',
+              'peHashNG', 'Platform', 'GUI Program', 'Console Program', 'DLL',
+              'Packed', 'Anti-Debug', 'mutex', 'contains base64',
+              'AntiDebugMethod', 'PEiD', 'TrID', 'nearest sha256',
+              'nearest value', 'VTismalware', 'VirusTotalLink', 'strings', 
+              'import table', 'export table']
+    IMPHEAD = ['date', 'sha256']
 
 
 def prepare(pefiles_dir):
@@ -178,6 +193,62 @@ def analyse(filepath, pefiles_dir, pe, collection, useVT, api_key):
         ret_list.append('')
         ret_list.append('')
     
+    # strings
+    res = subprocess.check_output(['strings', filepath])
+    res = res.decode('utf-8')
+    ret_list.append(res)
+
+    # import table
+    imports = []
+    for entry in pe.DIRECTORY_ENTRY_IMPORT:
+        for imp in entry.imports:
+            try:
+                imports.append(imp.name.decode('utf-8'))
+            except:
+                pass
+    imports_str = '\n'.join(imports)
+    ret_list.append(imports_str)
+
+    # export table
+    if hasattr(pe, 'DIRECTORY_ENTRY_EXPORT'):
+        exports = [s.name.decode('utf-8') for s in pe.DIRECTORY_ENTRY_EXPORT.symbols]
+        exports_str = '\n'.join(exports)
+    else:
+        exports_str = ''
+    ret_list.append(exports_str)
+
+    # 'Dynamic Base', 'ASLR', 'High Entropy VA', 'Force Integrity', 
+    # 'Isolation', 'NX', 'SEH', 'CFG', 'RFG', 'SafeSEH', 'GS', 
+    # 'Authenticode', '.NET'
+    if isUbuntu:
+        cwd = os.getcwd()
+        os.chdir(cwd + '/winchecksec/build')
+        res = subprocess.check_output(['./winchecksec', filepath])
+        res = res.decode('utf-8').split('\n')
+        r = re.compile('([^:]+):\s\"([^"]+)\"')
+        res_dict = {}
+        for s in res:
+            m = r.match(s)
+            if m:
+                k = m.group(1).strip()
+                res_dict[k if k != '.NET' else 'dotNET'] = m.group(2)
+        
+        ret_list.append(res_dict['Dynamic Base'])
+        ret_list.append(res_dict['ASLR'])
+        ret_list.append(res_dict['High Entropy VA'])
+        ret_list.append(res_dict['Force Integrity'])
+        ret_list.append(res_dict['Isolation'])
+        ret_list.append(res_dict['NX'])
+        ret_list.append(res_dict['SEH'])
+        ret_list.append(res_dict['CFG'])
+        ret_list.append(res_dict['RFG'])
+        ret_list.append(res_dict['SafeSEH'])
+        ret_list.append(res_dict['GS'])
+        ret_list.append(res_dict['Authenticode'])
+        ret_list.append(res_dict['dotNET'])
+        
+        os.chdir(cwd)
+
     ret_dict = {}
     for i in range(0, len(HEADER)):
         ret_dict[HEADER[i]] = ret_list[i]

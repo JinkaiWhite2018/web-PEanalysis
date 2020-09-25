@@ -15,9 +15,11 @@ if not app.config.from_pyfile('instance_config.cfg', silent=True):
     app.config['VT_API_KEY'] = ''
     app.config['CUCKOO_API_KEY'] = ''
 
-client = MongoClient(app.config['HOST_DB'], app.config['PORT_DB'])
-db = client[app.config['USE_DB']]
-collection = db[app.config['USE_COLLECTION']]
+host   = os.getenv('HOST_MONGODB', app.config['HOST_DB'])
+port   = os.getenv('PORT_MONGODB', app.config['PORT_DB'])
+client = MongoClient(host, port)
+db = client[os.getenv('DB_MONGODB', app.config['USE_DB'])]
+collection = db[os.getenv('COLLECTION_MONGODB', app.config['USE_COLLECTION'])]
 
 
 @app.route('/analyse/<filename>/<useVT>', methods=['GET'])
@@ -101,9 +103,42 @@ def render_pefile(s256):
     if os.path.isfile(topath):
         with open(topath, 'r') as f:
             textdata = f.read()
-            return render_template('pefile.html', title='web-PEanalysis - pefile', 
-                    textdata=textdata, 
+            return render_template('one_data.html', title='web-PEanalysis - pefile', 
+                    one_data=textdata, 
                     cuckoo=app.config['cuckoo'])
+    else:
+        return '不正なリクエストです。'
+
+
+@app.route('/strings/<s256>')
+def render_strings(s256):
+    result = collection.find_one({'sha256': s256})
+    if result:
+        return render_template('one_data.html', title='PEFile Surface Analyser - strings', 
+                one_data=result['strings'], 
+                cuckoo=app.config['cuckoo'])
+    else:
+        return '不正なリクエストです。'
+
+
+@app.route('/imports/<s256>')
+def render_imports(s256):
+    result = collection.find_one({'sha256': s256})
+    if result:
+        return render_template('one_data.html', title='PEFile Surface Analyser - import table', 
+                one_data=result['import table'], 
+                cuckoo=app.config['cuckoo'])
+    else:
+        return '不正なリクエストです。'
+
+
+@app.route('/exports/<s256>')
+def render_exports(s256):
+    result = collection.find_one({'sha256': s256})
+    if result:
+        return render_template('one_data.html', title='PEFile Surface Analyser - export table', 
+                one_data=result['export table'], 
+                cuckoo=app.config['cuckoo'])
     else:
         return '不正なリクエストです。'
 
