@@ -9,6 +9,7 @@ services:
         restart: always
         volumes:
             - ./uploads:/root/web-PEanalysis/uploads
+            - ./pefiles:/root/web-PEanalysis/pefiles
         tty: true
     mongo:
         image: mongo

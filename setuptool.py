@@ -62,7 +62,7 @@ if not os.path.exists('PEiD'):
 			if chunk:
 				f.write(chunk)
 				f.flush()
-
+	cp = subprocess.run(['ln', '-s', '/lib64/libcrypto.so.1.0.2k', '/lib64/libcrypto.so.1.0.0'])
 	cp = subprocess.run(['chmod', '755', 'PEiD'])
 	cp = subprocess.run(['./PEiD', '--prepare'])
 	os.chdir('../')
